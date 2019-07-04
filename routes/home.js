@@ -5,7 +5,6 @@ router.get('/', (req, res) => {
       'name': 'burger-queen-api',
       'version': '1.0.0'
     }
-  )
+  );
 });
-
 module.exports = router;

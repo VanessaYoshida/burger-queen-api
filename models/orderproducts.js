@@ -8,6 +8,5 @@ module.exports = (sequelize, DataTypes) => {
     OrderProducts.belongsTo(models.Products, {foreignKey: 'productId'});
     OrderProducts.belongsTo(models.Orders, {foreignKey: 'orderId'});
   };
-  
   return OrderProducts;
 };

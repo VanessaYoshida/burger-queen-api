@@ -8,6 +8,5 @@ module.exports = (sequelize, DataTypes) => {
     Orders.belongsTo(models.User, {foreignKey: 'uid'});
     Orders.hasMany(models.OrderProducts, {foreignKey: 'orderId'});
   };
-
   return Orders;
 };

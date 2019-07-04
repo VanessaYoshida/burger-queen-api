@@ -1,5 +1,4 @@
 'use strict';
-
 module.exports = (sequelize, DataTypes) => {
   const Products = sequelize.define('Products', {
     name: DataTypes.STRING,
@@ -9,7 +8,6 @@ module.exports = (sequelize, DataTypes) => {
   Products.associate = function(models) {
     Products.hasMany(models.OrderProducts, {foreignKey: 'productId'});
   };
-  
   // sequelize.sync()
   // .then(() => {
   //   Products.create({name: 'CAFE AMERICANO', price: 5, category:"BREAKFAST"});
@@ -31,6 +29,5 @@ module.exports = (sequelize, DataTypes) => {
   //   Products.create({name: 'BEBIDA GASEIFICADA 500ML', price: 7, category:"LUNCH"});
   //   Products.create({name: 'BEBIDA GASEIFICADA 750ML', price: 10, category:"LUNCH"});
   // });
-
   return Products;
 };
