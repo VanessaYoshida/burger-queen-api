@@ -2,13 +2,22 @@ const express = require('express');
 const app = express();
 const db = require('./models/index');
 const jwt = require('jsonwebtoken');
+const verifyToken = require('./util/token');
+const models = require('./models');
+const Users = models.User;
 
 app.use(express.json()); 
+app.post('/auth',verifyToken, (req, res) => {
+  Users.findOne({where: {email: req.body.email}}) ?
+  teste(req, res) : console.log("Não pode")
+});
 app.use('/', verifyToken, require('./routes/home'));
 app.use('/users', verifyToken, require('./routes/user'));
 app.use('/orders', verifyToken, require('./routes/orders'));
 app.use('/products', verifyToken, require('./routes/products'));
-app.post('/auth',verifyToken, (req, res) => {
+
+
+function teste (req, res) {
   jwt.sign({
     email: req.body.email,
     password: req.body.password
@@ -17,19 +26,7 @@ app.post('/auth',verifyToken, (req, res) => {
       token
     })
     localStorage.setItem('token', token);
-  });
-})
-
-function verifyToken (req, res, next) {
-  const bearerHeader = req.headers['authorization'];
-  if(typeof bearerHeader !== "undefined"){
-    const bearer = bearerHeader.split(' ');
-    const bearerToken = bearer[1];
-    req.token = bearerToken;
-    next();
-  } else {
-    res.sendStatus(403);
-  }
+  })
 }
 
 app.listen(8080, console.log('Servidor rodando'));
