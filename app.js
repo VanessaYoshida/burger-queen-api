@@ -2,32 +2,41 @@ const express = require('express');
 const app = express();
 const db = require('./models/index');
 const jwt = require('jsonwebtoken');
-const verifyToken = require('./util/token');
-const models = require('./models');
-const Users = models.User;
+const users = require('./routes/user');
+const cookieParser = require('cookie-parser');
+const SECRET = 'secretKey';
+// const verifyToken = require('./util/token');
 
 app.use(express.json()); 
-app.post('/auth',verifyToken, (req, res) => {
-  Users.findOne({where: {email: req.body.email}}) ?
-  teste(req, res) : console.log("Não pode")
-});
-app.use('/', verifyToken, require('./routes/home'));
-app.use('/users', verifyToken, require('./routes/user'));
-app.use('/orders', verifyToken, require('./routes/orders'));
-app.use('/products', verifyToken, require('./routes/products'));
+app.use(cookieParser());
 
-
-function teste (req, res) {
-  jwt.sign({
+app.post('/auth', (req, res) => {
+  let token = jwt.sign({
     email: req.body.email,
     password: req.body.password
-  }, 'secretkey', {expiresIn: '30s'}, (err, token) => {
-    res.json({
-      token
-    })
-    localStorage.setItem('token', token);
+  }, SECRET);
+  res.cookie('access_token', token, {
+    maxAge: 3600,
+    httpOnly: true,
+    secure: true
   })
-}
+  res.status(200).send("deu certo")
+});
+
+app.use('/', require('./routes/home'));
+app.use('/users', require('./routes/user'));
+app.use('/orders', require('./routes/orders'));
+app.use('/products', require('./routes/products'));
+
+// app.use('/users', (req, res) => {
+//   const token = req.cookies.access_token
+//   try {
+//     jwt.verify(token, SECRET);
+//   } catch(err) {
+//     res.status(400)
+//   }
+//   res.status(200).json(users)
+// });
 
 app.listen(8080, console.log('Servidor rodando'));
 db.sequelize.sync();
